@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frutalía - Pedidos de Jugos Naturales</title>
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+        }
+
+        /* Estilos del formulario */
+        .form-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h2, .pedidos-section h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos de la lista de pedidos */
+        .pedidos-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .pedidos-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .pedido-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .pedido-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pedido-card h3 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .pedido-card p {
+            margin-bottom: 8px;
+        }
+
+        .pedido-card .comentarios {
+            font-style: italic;
+            color: #666;
+        }
+
+        .estado-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Estilos del footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            color: #666;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .pedidos-lista {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍹 Frutalía - Jugos Naturales</h1>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Registrar Nuevo Pedido</h2>
+                <form id="pedidoForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Cliente:</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sabor">Sabor del Jugo:</label>
+                        <select id="sabor" required>
+                            <option value="">Seleccione un sabor</option>
+                            <option value="Naranja">Naranja</option>
+                            <option value="Fresa">Fresa</option>
+                            <option value="Piña">Piña</option>
+                            <option value="Mango">Mango</option>
+                            <option value="Melón">Melón</option>
+                            <option value="Sandía">Sandía</option>
+                            <option value="Zanahoria">Zanahoria</option>
+                            <option value="Mixto">Mixto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tamaño del Vaso:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="tamano" value="Chico" checked> Chico ($20)
+                            </label>
+                            <label>
+                                <input type="radio" name="tamano" value="Mediano"> Mediano ($30)
+                            </label>
+                            <label>
+                                <input type="radio" name="tamano" value="Grande"> Grande ($40)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comentarios">Comentarios (opcional):</label>
+                        <textarea id="comentarios" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn">Registrar Pedido</button>
+                </form>
+            </section>
+
+            <section class="pedidos-section">
+                <h2>Pedidos Recientes</h2>
+                <div id="pedidosLista" class="pedidos-lista">
+                    <!-- Los pedidos se cargarán aquí dinámicamente -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2023 Frutalía - Todos los derechos reservados</p>
+        </footer>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiWePFtF55cmPe4HI1woKt6xaX9F9Aq9Q",
+            authDomain: "frutalia-d6c64.firebaseapp.com",
+            projectId: "frutalia-d6c64",
+            storageBucket: "frutalia-d6c64.appspot.com",
+            messagingSenderId: "261112211097",
+            appId: "1:261112211097:web:7606f2caa6132e38d13a08"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Referencia a la colección de pedidos
+        const pedidosRef = collection(db, 'pedidos');
+
+        // Elementos del DOM
+        const pedidoForm = document.getElementById('pedidoForm');
+        const pedidosLista = document.getElementById('pedidosLista');
+        const toast = document.getElementById('toast');
+
+        // Función para mostrar notificación toast
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Función para registrar un nuevo pedido
+        pedidoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const sabor = document.getElementById('sabor').value;
+            const tamano = document.querySelector('input[name="tamano"]:checked').value;
+            const comentarios = document.getElementById('comentarios').value;
+            
+            try {
+                // Agregar el pedido a Firestore
+                await addDoc(pedidosRef, {
+                    nombre,
+                    sabor,
+                    tamano,
+                    comentarios,
+                    fecha: serverTimestamp(),
+                    estado: 'pendiente'
+                });
+                
+                // Limpiar el formulario después de enviar
+                pedidoForm.reset();
+                showToast('Pedido registrado con éxito!');
+            } catch (error) {
+                console.error("Error al registrar pedido: ", error);
+                showToast('Ocurrió un error al registrar el pedido');
+            }
+        });
+
+        // Función para cambiar el estado de un pedido
+        async function cambiarEstado(pedidoId, nuevoEstado) {
+            try {
+                const pedidoRef = doc(db, 'pedidos', pedidoId);
+                await updateDoc(pedidoRef, {
+                    estado: nuevoEstado
+                });
+                showToast('Estado actualizado!');
+            } catch (error) {
+                console.error("Error al actualizar estado: ", error);
+                showToast('Error al actualizar estado');
+            }
+        }
+
+        // Función para mostrar los pedidos
+        function mostrarPedidos(pedidos) {
+            if (pedidos.length === 0) {
+                pedidosLista.innerHTML = '<p>No hay pedidos registrados aún.</p>';
+                return;
+            }
+            
+            pedidosLista.innerHTML = '';
+            
+            pedidos.forEach(doc => {
+                const pedido = doc.data();
+                const pedidoCard = document.createElement('div');
+                pedidoCard.className = 'pedido-card';
+                pedidoCard.id = `pedido-${doc.id}`;
+                
+                // Formatear la fecha si está disponible
+                let fechaStr = 'Fecha no disponible';
+                if (pedido.fecha) {
+                    const fecha = pedido.fecha.toDate();
+                    fechaStr = fecha.toLocaleString('es-MX');
+                }
+                
+                pedidoCard.innerHTML = `
+                    <h3>${pedido.nombre}</h3>
+                    <p><strong>Sabor:</strong> ${pedido.sabor}</p>
+                    <p><strong>Tamaño:</strong> ${pedido.tamano}</p>
+                    <p><strong>Fecha:</strong> ${fechaStr}</p>
+                    <p><strong>Estado:</strong> <span class="estado-texto">${pedido.estado}</span></p>
+                    ${pedido.comentarios ? `<p class="comentarios"><strong>Comentarios:</strong> ${pedido.comentarios}</p>` : ''}
+                    <button class="estado-btn" onclick="cambiarEstado('${doc.id}', '${pedido.estado === 'pendiente' ? 'preparando' : pedido.estado === 'preparando' ? 'completado' : 'pendiente'}')">
+                        Cambiar a ${pedido.estado === 'pendiente' ? 'Preparando' : pedido.estado === 'preparando' ? 'Completado' : 'Pendiente'}
+                    </button>
+                `;
+                
+                pedidosLista.appendChild(pedidoCard);
+            });
+        }
+
+        // Escuchar cambios en la colección de pedidos en tiempo real
+        onSnapshot(pedidosRef, (snapshot) => {
+            const pedidos = [];
+            snapshot.forEach(doc => {
+                pedidos.push({ id: doc.id, data: doc.data() });
+            });
+            // Ordenar por fecha (más reciente primero)
+            pedidos.sort((a, b) => {
+                const fechaA = a.data.fecha ? a.data.fecha.toMillis() : 0;
+                const fechaB = b.data.fecha ? b.data.fecha.toMillis() : 0;
+                return fechaB - fechaA;
+            });
+            mostrarPedidos(pedidos);
+        }, error => {
+            console.error("Error al obtener pedidos: ", error);
+            mostrarPedidosSimulados();
+        });
+
+        // Versión simulada para probar sin Firebase
+        function mostrarPedidosSimulados() {
+            const pedidos = [
+                {
+                    id: 'simulado1',
+                    data: {
+                        nombre: "Juan Pérez",
+                        sabor: "Mango",
+                        tamano: "Grande",
+                        fecha: new Date(),
+                        estado: "pendiente",
+                        comentarios: "Sin azúcar por favor"
+                    }
+                },
+                {
+                    id: 'simulado2',
+                    data: {
+                        nombre: "María García",
+                        sabor: "Naranja",
+                        tamano: "Mediano",
+                        fecha: new Date(),
+                        estado: "preparando",
+                        comentarios: ""
+                    }
+                }
+            ];
+
+            const pedidosLista = document.getElementById('pedidosLista');
+            pedidosLista.innerHTML = '';
+            
+            pedidos.forEach(pedido => {
+                const pedidoCard = document.createElement('div');
+                pedidoCard.className = 'pedido-card';
+                pedidoCard.id = `pedido-${pedido.id}`;
+                
+                pedidoCard.innerHTML = `
+                    <h3>${pedido.data.nombre}</h3>
+                    <p><strong>Sabor:</strong> ${pedido.data.sabor}</p>
+                    <p><strong>Tamaño:</strong> ${pedido.data.tamano}</p>
+                    <p><strong>Fecha:</strong> ${pedido.data.fecha.toLocaleString()}</p>
+                    <p><strong>Estado:</strong> <span class="estado-texto">${pedido.data.estado}</span></p>
+                    ${pedido.data.comentarios ? `<p class="comentarios"><strong>Comentarios:</strong> ${pedido.data.comentarios}</p>` : ''}
+                    <button class="estado-btn" onclick="cambiarEstado('${pedido.id}', '${pedido.data.estado === 'pendiente' ? 'preparando' : pedido.data.estado === 'preparando' ? 'completado' : 'pendiente'}')">
+                        Cambiar a ${pedido.data.estado === 'pendiente' ? 'Preparando' : pedido.data.estado === 'preparando' ? 'Completado' : 'Pendiente'}
+                    </button>
+                `;
+                
+                pedidosLista.appendChild(pedidoCard);
+            });
+        }
+
+        // Hacer la función cambiarEstado disponible globalmente
+        window.cambiarEstado = cambiarEstado;
+    </script>
+</body>
+</html>
